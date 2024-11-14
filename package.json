@@ -1,0 +1,25 @@
+{
+  "name": "graphlung_virtual_lab",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/bun": "latest",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.9.0",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.14.0",
+    "prettier": "^3.3.3",
+    "prisma": "^5.22.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "@prisma/client": "^5.22.0",
+    "bcrypt": "^5.1.1",
+    "hono": "^4.6.10",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
