@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (formData: any) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/register', formData);
+      const response = await axios.post('https://graphlung-virtual-lab-rust.vercel.app/api/auth/register', formData);
       const { message } = response.data;
       console.log(message);
       return message;
