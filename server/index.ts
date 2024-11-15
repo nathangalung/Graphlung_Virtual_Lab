@@ -2,7 +2,7 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { register, login } from './src/controllers/auth';
-import { updateGameStats, getGameStats } from './src/controllers/game';
+import { updateGameRecords, getGameRecords } from './src/controllers/game';
 import { authMiddleware } from './src/middleware/auth';
 
 const app = new Hono();
@@ -16,8 +16,8 @@ app.post('/api/auth/login', login);
 
 // Protected routes
 app.use('/api/game/*', authMiddleware);
-app.get('/api/game/stats', getGameStats);
-app.post('/api/game/stats', updateGameStats);
+app.get('/api/game/records', getGameRecords);
+app.post('/api/game/records', updateGameRecords);
 
 // Start server
 const port = process.env.PORT || 3000;

@@ -1,14 +1,16 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
+import axios from 'axios';
 
 interface User {
-  username: string;
+  id: number;
   email: string;
+  username: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (usernameOrEmail: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   register: (formData: any) => Promise<void>;
   logout: () => void;
 }
@@ -19,11 +21,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const login = async (usernameOrEmail: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
-      // Mock login - replace with actual API call
-      setUser({ username: usernameOrEmail, email: `${usernameOrEmail}@example.com` });
+      const response = await axios.post('/api/auth/login', { email, password });
+      const { user, token } = response.data;
+      setUser(user);
       setIsAuthenticated(true);
+      localStorage.setItem('token', token);
     } catch (error) {
       console.error('Login failed:', error);
       throw new Error('Login failed');
@@ -32,9 +36,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (formData: any) => {
     try {
-      // Mock register - replace with actual API call
-      setUser({ username: formData.username, email: formData.email });
-      setIsAuthenticated(true);
+      const response = await axios.post('http://localhost:3000/api/auth/register', formData);
+      const { message } = response.data;
+      console.log(message);
+      return message;
     } catch (error) {
       console.error('Registration failed:', error);
       throw new Error('Registration failed');
@@ -44,6 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
+    localStorage.removeItem('token');
   };
 
   return (

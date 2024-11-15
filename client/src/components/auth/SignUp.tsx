@@ -6,12 +6,13 @@ const SignUp = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
+    username: '',
     password: '',
     confirmPassword: ''
   });
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +21,9 @@ const SignUp = () => {
       return;
     }
     try {
-      await register(formData);
-      navigate('/');
+      const message = await register(formData);
+      setSuccessMessage(message);
+      setError('');
     } catch (err) {
       setError('Registration failed');
     }
@@ -40,21 +42,11 @@ const SignUp = () => {
           {error && (
             <div className="mb-4 text-red-600 text-center">{error}</div>
           )}
+          {successMessage && (
+            <div className="mb-4 text-green-600 text-center">{successMessage}</div>
+          )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Username
-              </label>
-              <input
-                type="text"
-                required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                value={formData.username}
-                onChange={(e) => setFormData({...formData, username: e.target.value})}
-              />
-            </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Email
@@ -65,6 +57,19 @@ const SignUp = () => {
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Username
+              </label>
+              <input
+                type="text"
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                value={formData.username}
+                onChange={(e) => setFormData({...formData, username: e.target.value})}
               />
             </div>
 

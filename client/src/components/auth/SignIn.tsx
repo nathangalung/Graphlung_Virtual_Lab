@@ -6,7 +6,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
-    usernameOrEmail: '',
+    email: '',
     password: '',
   });
   const [error, setError] = useState('');
@@ -14,7 +14,7 @@ const SignIn = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(formData.usernameOrEmail, formData.password);
+      await login(formData.email, formData.password);
       navigate('/');
     } catch (err) {
       setError('Invalid credentials');
@@ -34,18 +34,18 @@ const SignIn = () => {
           {error && (
             <div className="mb-4 text-red-600 text-center">{error}</div>
           )}
-          
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Username or Email
+                Email
               </label>
               <input
-                type="text"
+                type="email"
                 required
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                value={formData.usernameOrEmail}
-                onChange={(e) => setFormData({...formData, usernameOrEmail: e.target.value})}
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
               />
             </div>
 

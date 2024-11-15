@@ -1,16 +1,18 @@
 import { Context } from 'hono';
 import { PrismaClient } from '@prisma/client';
-import { GameStatSchema } from '../types';
+import { GameRecordSchema } from '../types';
 
 const prisma = new PrismaClient();
 
-export const updateGameStats = async (c: Context) => {
+export const updateGameRecords = async (c: Context) => {
   try {
+    console.log('Update game records endpoint hit');
     const userId = c.get('userId');
     const body = await c.req.json();
-    const { levelComplete, score, timeInSeconds } = GameStatSchema.parse(body);
+    console.log('Request body:', body);
+    const { levelComplete, score, timeInSeconds } = GameRecordSchema.parse(body);
 
-    const gameStats = await prisma.gameStats.update({
+    const gameRecords = await prisma.gameRecords.update({
       where: { userId },
       data: {
         totalPoints: { increment: score },
@@ -31,22 +33,27 @@ export const updateGameStats = async (c: Context) => {
       }
     });
 
-    return c.json({ gameStats });
+    console.log('Game records updated successfully:', gameRecords);
+    return c.json({ gameRecords });
   } catch (error) {
+    console.error('Error in update game records endpoint:', error);
     return c.json({ error: 'Invalid input' }, 400);
   }
 };
 
-export const getGameStats = async (c: Context) => {
+export const getGameRecords = async (c: Context) => {
   try {
+    console.log('Get game records endpoint hit');
     const userId = c.get('userId');
 
-    const gameStats = await prisma.gameStats.findUnique({
+    const gameRecords = await prisma.gameRecords.findUnique({
       where: { userId }
     });
 
-    return c.json({ gameStats });
+    console.log('Game records retrieved successfully:', gameRecords);
+    return c.json({ gameRecords });
   } catch (error) {
+    console.error('Error in get game records endpoint:', error);
     return c.json({ error: 'Server error' }, 500);
   }
 };

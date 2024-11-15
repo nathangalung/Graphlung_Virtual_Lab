@@ -14,10 +14,10 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  gameStats GameStats?
+  gameRecords GameRecords?
 }
 
-model GameStats {
+model GameRecords {
   id            Int      @id @default(autoincrement())
   userId        Int      @unique
   user          User     @relation(fields: [userId], references: [id])
@@ -28,9 +28,9 @@ model GameStats {
   easyHighScore Int      @default(0)
   mediumHighScore Int    @default(0)
   hardHighScore Int      @default(0)
-  easyBestTime  Int?     # in seconds
-  mediumBestTime Int?    # in seconds
-  hardBestTime  Int?     # in seconds
+  easyBestTime  Int?     // in seconds
+  mediumBestTime Int?    // in seconds
+  hardBestTime  Int?     // in seconds
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

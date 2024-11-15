@@ -24,33 +24,19 @@ const Header = () => {
               <Link to="/" className="block px-6 py-4 hover:bg-purple-900">
                 HOME
               </Link>
-              <ul className="dropdown-content">
-                <li><a href="#general" className="block px-4 py-2 hover:bg-purple-800">General</a></li>
-                <li><a href="#math" className="block px-4 py-2 hover:bg-purple-800">Math</a></li>
-                <li><a href="#graph" className="block px-4 py-2 hover:bg-purple-800">Graph</a></li>
-              </ul>
             </li>
-
             {/* Simulation Navigation */}
             <li className="dropdown relative group">
               <Link to="/simulation" className="block px-6 py-4 hover:bg-purple-900">
                 SIMULATION
               </Link>
-              <ul className="dropdown-content">
-                <li><Link to="/simulation#cubic" className="block px-4 py-2 hover:bg-purple-800">Cubic</Link></li>
-                <li><Link to="/simulation#sinus" className="block px-4 py-2 hover:bg-purple-800">Sinus</Link></li>
-                <li><Link to="/simulation#cosinus" className="block px-4 py-2 hover:bg-purple-800">Cosinus</Link></li>
-                <li><Link to="/simulation#tangen" className="block px-4 py-2 hover:bg-purple-800">Tangen</Link></li>
-              </ul>
             </li>
-
             {/* Game Navigation */}
             <li className="dropdown relative group">
               <Link to="/game" className="block px-6 py-4 hover:bg-purple-900">
                 GAME
               </Link>
             </li>
-
             {/* Auth Navigation */}
             {isAuthenticated ? (
               <li className="dropdown relative group">
