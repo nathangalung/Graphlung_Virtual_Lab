@@ -5,7 +5,7 @@ import { calculateGraph } from '../utils/Calculation';
 
 interface GraphProps {
   type: GraphType;
-  readOnly?: boolean;
+  readOnly?: boolean; // New prop to determine if sliders and comparator should be shown
   initialParameters?: Parameters;
 }
 
@@ -16,9 +16,9 @@ interface Parameters {
   d: number;
 }
 
-const Graph: React.FC<GraphProps> = ({ type }) => {
+const Graph: React.FC<GraphProps> = ({ type, readOnly = false, initialParameters = { a: 0, b: 0, c: 0, d: 0 } }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [parameters, setParameters] = useState<Parameters>({ a: 0, b: 0, c: 0, d: 0 });
+  const [parameters, setParameters] = useState<Parameters>(initialParameters);
   const [comparator, setComparator] = useState<string>("=");
 
   useEffect(() => {
@@ -32,6 +32,10 @@ const Graph: React.FC<GraphProps> = ({ type }) => {
     const cleanup = showCoordinates(canvas, ctx);
     return cleanup;
   }, [parameters, type]);
+
+  useEffect(() => {
+    setParameters(initialParameters); // Pastikan parameter grafik terupdate otomatis
+  }, [initialParameters]);
 
   const drawGraph = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
     drawGrid(ctx, { width, height });
@@ -70,43 +74,45 @@ const Graph: React.FC<GraphProps> = ({ type }) => {
           />
         </div>
         
-        <div className="w-full md:w-1/3 mt-4 md:mt-0">
-          {Object.keys(parameters).map((param) => (
-            <div key={param} className="mb-4">
+        {!readOnly && ( // Show sliders and comparator only if not read-only
+          <div className="w-full md:w-1/3 mt-4 md:mt-0">
+            {Object.keys(parameters).map((param) => (
+              <div key={param} className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  {param}: {parameters[param as keyof Parameters]}
+                </label>
+                <input
+                  type="range"
+                  min="-10"
+                  max="10"
+                  step="1"
+                  value={parameters[param as keyof Parameters]}
+                  onChange={(e) => handleParameterChange(param as keyof Parameters, parseInt(e.target.value))}
+                  className="w-full mt-1"
+                />
+              </div>
+            ))}
+
+            <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
-                {param}: {parameters[param as keyof Parameters]}
+                Comparator: {comparator}
               </label>
-              <input
-                type="range"
-                min="-10"
-                max="10"
-                step="1"
-                value={parameters[param as keyof Parameters]}
-                onChange={(e) => handleParameterChange(param as keyof Parameters, parseInt(e.target.value))}
-                className="w-full mt-1"
-              />
+              <select
+                value={comparator}
+                onChange={(e) => setComparator(e.target.value)}
+                className="mt-1 block w-1/3 rounded-md border-gray-300 shadow-sm border"
+              >
+                <option value="=">=</option>
+                <option value="<">{'<'}</option>
+                <option value=">">{'>'}</option>
+              </select>
             </div>
-          ))}
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Comparator: {comparator}
-            </label>
-            <select
-              value={comparator}
-              onChange={(e) => setComparator(e.target.value)}
-              className="mt-1 block w-1/3 rounded-md border-gray-300 shadow-sm border"
-            >
-              <option value="=">=</option>
-              <option value="<">{'<'}</option>
-              <option value=">">{'>'}</option>
-            </select>
+            <p className="mt-4">
+              Equation: y {comparator} {parameters.a}x³ + {parameters.b}x² + {parameters.c}x + {parameters.d}
+            </p>
           </div>
-
-          <p className="mt-4">
-            Equation: y {comparator} {parameters.a}x³ + {parameters.b}x² + {parameters.c}x + {parameters.d}
-          </p>
-        </div>
+        )}
       </div>
     </div>
   );

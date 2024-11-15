@@ -31,7 +31,7 @@ const Navigation: React.FC = () => {
         <li className="dropdown relative group">
           <a href="#" className="block px-6 py-4 hover:bg-purple-900">LOGIN</a>
           <ul className="dropdown-content hidden group-hover:block absolute left-0 bg-[#2c003e] min-w-[200px] shadow-lg">
-            <li><a href="#singin" className="block px-4 py-2 hover:bg-purple-800">Sign In</a></li>
+            <li><a href="#signin" className="block px-4 py-2 hover:bg-purple-800">Sign In</a></li>
             <li><a href="#signup" className="block px-4 py-2 hover:bg-purple-800">Sign Up</a></li>
           </ul>
         </li>

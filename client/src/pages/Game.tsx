@@ -1,86 +1,56 @@
 import React, { useState } from 'react';
-import Easy from '../components/gameplay/Easy'
+import GamePanel from '../components/gameplay/GamePanel';
+import Level from '../components/gameplay/Level';
+import CompletionScreen from '../components/gameplay/CompletionScreen';
 
-const Game = () => {
-  const [selectedLevel, setSelectedLevel] = useState('');
-  const [isGameStarted, setIsGameStarted] = useState(false);
+interface GameProps {
+  exitToMenu: () => void;
+  updateStats: (level: 'easy' | 'medium' | 'hard', score: number, time: string) => void;
+  isAuthenticated: boolean;
+}
 
-  const handleStartGame = () => {
-    if (selectedLevel) {
-      setIsGameStarted(true);
-    } else {
-      alert('Please select a level to start the game.');
+const Game: React.FC<GameProps> = ({ exitToMenu, updateStats, isAuthenticated }) => {
+  const [isGameComplete, setIsGameComplete] = useState(false);
+  const [score, setScore] = useState(0);
+  const [totalTime, setTotalTime] = useState(0);
+  const [currentLevel] = useState<'easy' | 'medium' | 'hard'>('easy');
+
+  const completeGame = (finalScore: number, timeInSeconds: number) => {
+    const formattedTime = `${Math.floor(timeInSeconds / 60)}:${(timeInSeconds % 60).toString().padStart(2, '0')}`;
+    setScore(finalScore);
+    setTotalTime(timeInSeconds);
+    setIsGameComplete(true);
+    if (isAuthenticated) {
+      updateStats(currentLevel, finalScore, formattedTime);
     }
   };
 
-  if (isGameStarted) {
-    switch (selectedLevel) {
-        case 'easy':
-            return <Easy />;
-        default:
-            return null;
-    }
-  }
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Game Title */}
-      <h1 className="text-4xl font-bold text-center mb-6">GraphKing</h1>
-
-      {/* Video Section */}
-      <div className="flex justify-center mb-6">
-        <video
-          className="w-full md:w-3/4 lg:w-1/2"
-          controls
-          loop
-          autoPlay
-          muted
-        >
-          <source src="path_to_your_video.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      </div>
-
-      {/* Level Selection */}
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-semibold mb-4">Choose Difficulty Level</h2>
-        <div className="flex justify-center gap-8">
-          <button
-            className={`px-4 py-2 rounded-full text-white font-semibold ${selectedLevel === 'easy' ? 'bg-[#2c003e]' : 'bg-purple-800'}`}
-            onClick={() => setSelectedLevel('easy')}
-          >
-            Easy
-          </button>
-          <button
-            className={`px-4 py-2 rounded-full text-white font-semibold ${selectedLevel === 'medium' ? 'bg-[#2c003e]' : 'bg-purple-800'}`}
-            onClick={() => setSelectedLevel('medium')}
-          >
-            Medium
-          </button>
-          <button
-            className={`px-4 py-2 rounded-full text-white font-semibold ${selectedLevel === 'hard' ? 'bg-[#2c003e]' : 'bg-purple-800'}`}
-            onClick={() => setSelectedLevel('hard')}
-          >
-            Hard
-          </button>
+    <div className="w-full min-h-screen bg-gray-100 pt-[70px]">
+      <GamePanel exitToMenu={exitToMenu} />
+      {!isAuthenticated && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+          <p className="font-bold">Playing as Guest</p>
+          <p>Your progress won't be saved. <a href="/login" className="text-purple-600 hover:text-purple-800 underline">Login</a> to save your progress!</p>
         </div>
-      </div>
-
-      {/* Start Button */}
-      <div className="text-center">
-        <button
-          className="bg-green-600 text-white px-6 py-2 rounded-full font-semibold"
-          onClick={handleStartGame}
-        >
-          Start Game
-        </button>
-      </div>
-
-      {/* Display a message after starting the game */}
-      {isGameStarted && (
-        <div className="mt-6 text-center text-xl text-green-600">
-          <p>Game started! You selected: {selectedLevel} level.</p>
-        </div>
+      )}
+      {!isGameComplete ? (
+        <Level 
+          difficulty={currentLevel}
+          onComplete={completeGame}
+        />
+      ) : (
+        <CompletionScreen 
+          playAgain={() => {
+            setIsGameComplete(false);
+            setScore(0);
+            setTotalTime(0);
+          }}
+          exitToMenu={exitToMenu}
+          score={score}
+          totalTime={totalTime}
+          isAuthenticated={isAuthenticated}
+        />
       )}
     </div>
   );

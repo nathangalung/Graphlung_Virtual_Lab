@@ -1,3 +1,4 @@
+// src/types/index.ts
 export enum GraphType {
   CUBIC = 'cubic',
   SINUS = 'sinus',
@@ -5,9 +6,12 @@ export enum GraphType {
   TANGEN = 'tangen'
 }
 
-export interface GraphParameters {
-  a: number;
-  b: number;
-  c: number;
-  d: number;
+export interface Question {
+  parameters: { 
+    a: number; 
+    b: number; 
+    c: number; 
+    d: number 
+  };
+  graphType: GraphType;
 }
