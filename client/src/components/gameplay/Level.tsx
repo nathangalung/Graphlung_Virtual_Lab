@@ -1,4 +1,3 @@
-// src/components/Level.tsx
 import React, { useEffect, useState } from 'react';
 import { GraphType } from '../../types';
 import Graph from '../Graph';
@@ -21,7 +20,7 @@ const Level: React.FC<LevelProps> = ({ difficulty, onComplete }) => {
   const [message, setMessage] = useState<string | null>(null);
 
   const getQuestionConfig = (difficulty: 'easy' | 'medium' | 'hard'): Question => {
-    const randomInt = () => Math.floor(Math.random() * 21) - 10; // -10 to 10
+    const randomInt = () => Math.floor(Math.random() * 15) - 7; // -7 to 7
 
     switch (difficulty) {
       case 'easy':
@@ -127,8 +126,8 @@ const Level: React.FC<LevelProps> = ({ difficulty, onComplete }) => {
         <p className="text-lg">Time Left: {timeLeft} seconds</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="grid grid-cols-1 md:grid-cols-3">
+        <div className="bg-white rounded-lg shadow-md p-6 h-[500px] w-[400px] ml-[-100px]">
           <h3 className="text-xl font-semibold mb-4">Match this graph:</h3>
           <Graph
             type={currentQuestion.graphType}
@@ -137,43 +136,47 @@ const Level: React.FC<LevelProps> = ({ difficulty, onComplete }) => {
           />
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 h-[500px] w-[400px]">
           <h3 className="text-xl font-semibold mb-4">Your Answer:</h3>
           <Graph
             type={currentQuestion.graphType}
+            readOnly={true}
             initialParameters={userAnswer}
           />
-          <div className="mt-4">
-            {Object.keys(userAnswer).map((param) => (
-              <div key={param} className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  {param}: {userAnswer[param as keyof typeof userAnswer]}
-                </label>
-                <input
-                  type="range"
-                  min="-10"
-                  max="10"
-                  step="1"
-                  value={userAnswer[param as keyof typeof userAnswer]}
-                  onChange={(e) => handleSliderChange(
-                    param as keyof typeof userAnswer, 
-                    parseInt(e.target.value)
-                  )}
-                  className="w-full mt-1"
-                  disabled={isChecking}
-                />
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={checkAnswer}
-            disabled={isChecking}
-            className="mt-4 bg-purple-600 text-white py-2 px-4 rounded-md 
-                     hover:bg-purple-700 disabled:opacity-50 w-full"
-          >
-            Check Answer
-          </button>
         </div>
+        
+        <div className="bg-white rounded-lg shadow-md p-6 h-[500px] w-[300px] ml-[100px]">
+          <div className="mt-4 w-[250px]">
+              {Object.keys(userAnswer).map((param) => (
+                <div key={param} className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {param}: {userAnswer[param as keyof typeof userAnswer]}
+                  </label>
+                  <input
+                    type="range"
+                    min="-7"
+                    max="7"
+                    step="1"
+                    value={userAnswer[param as keyof typeof userAnswer]}
+                    onChange={(e) => handleSliderChange(
+                      param as keyof typeof userAnswer, 
+                      parseInt(e.target.value)
+                    )}
+                    className="w-full mt-1"
+                    disabled={isChecking}
+                  />
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={checkAnswer}
+              disabled={isChecking}
+              className="mt-4 bg-purple-600 text-white py-2 px-4 rounded-md 
+                      hover:bg-purple-700 disabled:opacity-50 w-full"
+            >
+              Check Answer
+            </button>
+        </div>            
       </div>
 
       {message && (

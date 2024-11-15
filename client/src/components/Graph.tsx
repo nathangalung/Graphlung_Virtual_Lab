@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GraphType } from '../types';
 import { drawGrid, showCoordinates } from '../utils/Grid';
 import { calculateGraph } from '../utils/Calculation';
 
 interface GraphProps {
   type: GraphType;
-  readOnly?: boolean; // New prop to determine if sliders and comparator should be shown
+  readOnly?: boolean;
   initialParameters?: Parameters;
 }
 
@@ -28,30 +28,36 @@ const Graph: React.FC<GraphProps> = ({ type, readOnly = false, initialParameters
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    drawGraph(ctx, canvas.width, canvas.height);
-    const cleanup = showCoordinates(canvas, ctx);
+    const drawGraph = () => {
+      drawGrid(ctx, { width: canvas.width, height: canvas.height });
+      drawGraphContent(ctx, canvas.width, canvas.height);
+    };
+
+    drawGraph();
+    const cleanup = showCoordinates(canvas, ctx, 20, drawGraph);
     return cleanup;
   }, [parameters, type]);
 
   useEffect(() => {
-    setParameters(initialParameters); // Pastikan parameter grafik terupdate otomatis
+    setParameters(initialParameters); // Ensure parameters are updated automatically
   }, [initialParameters]);
 
-  const drawGraph = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
-    drawGrid(ctx, { width, height });
-
+  const drawGraphContent = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
     // Draw graph
     const { a, b, c, d } = parameters;
     ctx.beginPath();
     ctx.strokeStyle = 'blue';
     ctx.lineWidth = 2;
 
-    for (let x = -10; x <= 10; x += 0.1) {
-      const y = calculateGraph(type, x, parameters);
-      const canvasX = width / 2 + x * (width / 22);
-      const canvasY = height / 2 - y * (height / 22);
+    const range = readOnly ? 7 : 10;
+    const scale = readOnly ? 15 : 22; // Adjust scale for read-only mode
 
-      if (x === -10) ctx.moveTo(canvasX, canvasY);
+    for (let x = -range; x <= range; x += 0.1) {
+      const y = calculateGraph(type, x, parameters);
+      const canvasX = width / 2 + x * (width / scale);
+      const canvasY = height / 2 - y * (height / scale);
+
+      if (x === -range) ctx.moveTo(canvasX, canvasY);
       else ctx.lineTo(canvasX, canvasY);
     }
     ctx.stroke();
@@ -62,14 +68,14 @@ const Graph: React.FC<GraphProps> = ({ type, readOnly = false, initialParameters
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-8 mx-auto max-w-7xl">
+    <div className={`bg-white rounded-lg shadow-md p-8 mx-auto ${readOnly ? 'max-w-md w-[350px]' : 'max-w-7xl w-[900px]'}`}>
       <div className="flex flex-col md:flex-row justify-between items-start">
-        <div className="w-full md:w-2/3">
-          <h3 className="text-2xl text-purple-900 mb-4">{type.toUpperCase()} GRAPH</h3>
+        <div className={`w-full ${readOnly ? 'md:w-full' : 'md:w-2/3'}`}>
+          <h3 className="text-2xl text-purple-900 mb-4">{readOnly ? 'GRAPH' : `${type.toUpperCase()} GRAPH`}</h3>
           <canvas
             ref={canvasRef}
-            width={440}
-            height={440}
+            width={readOnly ? 300 : 440}
+            height={readOnly ? 300 : 440}
             className="border border-gray-300 rounded"
           />
         </div>
@@ -93,7 +99,7 @@ const Graph: React.FC<GraphProps> = ({ type, readOnly = false, initialParameters
               </div>
             ))}
 
-            <div className="mb-4">
+            <div className="mb-1">
               <label className="block text-sm font-medium text-gray-700">
                 Comparator: {comparator}
               </label>

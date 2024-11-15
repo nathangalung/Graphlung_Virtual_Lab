@@ -10,7 +10,7 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://your-backend-url.vercel.app',
         changeOrigin: true,
         secure: false,
       },

@@ -4,7 +4,6 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --watch index.ts",
-    "build": "bun build index.ts",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio"

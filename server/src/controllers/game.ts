@@ -12,9 +12,9 @@ export const updateGameRecords = async (c: Context) => {
     console.log('Request body:', body);
     const { levelComplete, score, timeInSeconds } = GameRecordSchema.parse(body);
 
-    const gameRecords = await prisma.gameRecords.update({
+    const gameRecords = await prisma.gameRecords.upsert({
       where: { userId },
-      data: {
+      update: {
         totalPoints: { increment: score },
         [`${levelComplete}Complete`]: { increment: 1 },
         [`${levelComplete}HighScore`]: {
@@ -30,6 +30,13 @@ export const updateGameRecords = async (c: Context) => {
             ]
           }
         }
+      },
+      create: {
+        userId,
+        totalPoints: score,
+        [`${levelComplete}Complete`]: 1,
+        [`${levelComplete}HighScore`]: score,
+        [`${levelComplete}BestTime`]: timeInSeconds
       }
     });
 

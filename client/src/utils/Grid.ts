@@ -65,27 +65,53 @@ export const drawGrid = (ctx: CanvasRenderingContext2D, { width, height, unitSiz
 export const showCoordinates = (
   canvas: HTMLCanvasElement, 
   ctx: CanvasRenderingContext2D,
-  unitSize = 20
+  unitSize = 20,
+  drawGraph: () => void // Pass a function to redraw the graph
 ) => {
   const rect = canvas.getBoundingClientRect();
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
 
   const handleMouseMove = (event: MouseEvent) => {
-    const x = ((event.clientX - rect.left) - centerX) / unitSize;
-    const y = -((event.clientY - rect.top) - centerY) / unitSize;
-    
-    if (x < -10 || x > 10 || y < -10 || y > 10) return;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
 
-    // Clear previous coordinates
-    ctx.clearRect(centerX + 100, 10, 90, 30);
-    
-    // Show coordinates
-    ctx.font = '12px Arial';
+    const mouseX = (event.clientX - rect.left) * scaleX;
+    const mouseY = (event.clientY - rect.top) * scaleY;
+
+    const x = Math.round((mouseX - centerX) / unitSize);
+    const y = -Math.round((mouseY - centerY) / unitSize);
+
+    const range = 10;
+
+    // Limit coordinates to the range
+    if (x < -range || x > range || y < -range || y > range) {
+      drawGraph();
+      return;
+    }
+
+    drawGraph();
+
+    // Show coordinates near the cursor position
     ctx.fillStyle = '#000';
-    ctx.fillText(`(${x.toFixed(1)}, ${y.toFixed(1)})`, centerX + 110, 30);
+    ctx.font = '12px Arial';
+    ctx.fillText(`(${x}, ${y})`, mouseX + 15, mouseY - 15);
+
+    // Draw a small dot at the hover position
+    const hoverX = centerX + x * unitSize;
+    const hoverY = centerY - y * unitSize;
+
+    ctx.beginPath();
+    ctx.arc(hoverX, hoverY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'red';
+    ctx.fill();
   };
 
   canvas.addEventListener('mousemove', handleMouseMove);
-  return () => canvas.removeEventListener('mousemove', handleMouseMove);
+  canvas.addEventListener('mouseout', drawGraph);
+
+  return () => {
+    canvas.removeEventListener('mousemove', handleMouseMove);
+    canvas.removeEventListener('mouseout', drawGraph);
+  };
 };

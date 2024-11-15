@@ -25,13 +25,13 @@ const SignUp = () => {
       setSuccessMessage(message);
       setError('');
     } catch (err) {
-      setError('Registration failed');
+      setError(err.message);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md mt-[5%]">
         <h2 className="text-center text-3xl font-extrabold text-gray-900">
           Create your account
         </h2>

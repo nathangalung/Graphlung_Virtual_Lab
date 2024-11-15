@@ -10,7 +10,7 @@ const Header = () => {
   return (
     <header className="bg-[#2c003e] text-white fixed top-0 left-0 w-full z-50 shadow-md">
       <div className="container mx-auto px-4 h-[70px] flex justify-between items-center">
-        <h1 className="text-2xl font-black-ops">Graphlung Virtual Lab</h1>
+        <h1 className="text-2xl font-black-ops ml-[-100px]">Graphlung Virtual Lab</h1>
         <nav>
           <div 
             className="md:hidden text-2xl cursor-pointer"
@@ -50,7 +50,7 @@ const Header = () => {
               </li>
             ) : (
               <li className="dropdown relative group">
-                <Link to="/login" className="block px-6 py-4 hover:bg-purple-900">
+                <Link to="/login" className="block px-6 py-4 hover:bg-purple-900 mr-[-100px]">
                   LOGIN
                 </Link>
                 <ul className="dropdown-content">
