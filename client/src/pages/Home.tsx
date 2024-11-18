@@ -30,7 +30,7 @@ const Home = () => {
         </div>
         <div className="w-1/3 h-[425px] bg-white rounded-lg shadow-md p-4 flex justify-center items-center">
           <img 
-            src="../../src/assets/general.jpg" 
+            src="../assets/general.jpg" 
             alt="General" 
             className="w-4/5 h-4/5 object-cover rounded-lg shadow-md animate-float"
           />
@@ -40,6 +40,7 @@ const Home = () => {
       <section id="math" className="min-h-screen flex justify-center items-center px-4">
         <div className="w-1/3 h-[380px] bg-white rounded-lg shadow-md p-4 flex justify-center items-center">
           <img 
+            src="../assets/math.jpg" 
             src="../../src/assets/math.jpg" 
             alt="Math" 
             className="w-4/5 h-4/5 object-cover rounded-lg shadow-md animate-float"
@@ -73,6 +74,7 @@ const Home = () => {
         </div>
         <div className="w-1/3 h-[430px] bg-white rounded-lg shadow-md p-4 flex justify-center items-center">
           <img 
+            src="../assets/graph.jpg" 
             src="../../src/assets/graph.jpg" 
             alt="Graph" 
             className="w-4/5 h-4/5 object-cover rounded-lg shadow-md animate-float"
