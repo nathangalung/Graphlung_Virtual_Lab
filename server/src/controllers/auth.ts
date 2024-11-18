@@ -1,36 +1,24 @@
 import { Context } from 'hono';
-import { PrismaClient } from '@prisma/client';
+import prisma from './prisma';
 import { hashPassword, comparePasswords } from '../utils/password';
 import { generateToken } from '../utils/token';
-import { z } from 'zod';
-
-const prisma = new PrismaClient();
-
-const UserSchema = z.object({
-  email: z.string().email(),
-  username: z.string().min(3),
-  password: z.string().min(6),
-});
-
-const LoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-});
+import { UserSchema, LoginSchema } from '../types';
 
 export const register = async (c: Context) => {
   try {
-    console.log('Register endpoint hit');
     const body = await c.req.json();
-    console.log('Request body:', body);
     const { email, username, password } = UserSchema.parse(body);
 
-    const existingUser = await prisma.user.findFirst({
-      where: { OR: [{ email }, { username }] }
-    });
+    // Check for existing user with Promise.all for parallel execution
+    const [existingEmail, existingUsername] = await Promise.all([
+      prisma.user.findUnique({ where: { email } }),
+      prisma.user.findUnique({ where: { username } })
+    ]);
 
-    if (existingUser) {
-      console.log('Email or username already exists');
-      return c.json({ error: 'Email or username already exists' }, 400);
+    if (existingEmail || existingUsername) {
+      return c.json({
+        error: existingEmail ? 'Email already exists' : 'Username already exists'
+      }, 400);
     }
 
     const hashedPassword = await hashPassword(password);
@@ -46,11 +34,10 @@ export const register = async (c: Context) => {
       }
     });
 
-    console.log('User registered successfully:', user);
     return c.json({ message: 'Sign up successful. Please sign in to continue.' });
   } catch (error) {
     console.error('Error in register endpoint:', error);
-    return c.json({ error: 'Invalid input' }, 400);
+    return c.json({ error: 'Registration failed' }, 400);
   }
 };
 
@@ -59,9 +46,17 @@ export const login = async (c: Context) => {
     console.log('Login endpoint hit');
     const body = await c.req.json();
     console.log('Request body:', body);
-    const { email, password } = LoginSchema.parse(body);
+    const { identifier, password } = LoginSchema.parse(body);
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    // Find user by email or username
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: identifier },
+          { username: identifier }
+        ]
+      }
+    });
 
     if (!user) {
       console.log('Invalid credentials: User not found');

@@ -12,20 +12,30 @@ const SignUp = () => {
     confirmPassword: ''
   });
   const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
+
     try {
+      setIsSubmitting(true);
       const message = await register(formData);
-      setSuccessMessage(message);
-      setError('');
-    } catch (err) {
-      setError(err.message);
+      // Show success message and redirect
+      setTimeout(() => {
+        navigate('/signin');
+      }, 1500);
+    } catch (err: any) {
+      // Ensure the error message is a string
+      const errorMessage = err.response?.data?.error || err.message || 'Registration failed';
+      setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -41,9 +51,6 @@ const SignUp = () => {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {error && (
             <div className="mb-4 text-red-600 text-center">{error}</div>
-          )}
-          {successMessage && (
-            <div className="mb-4 text-green-600 text-center">{successMessage}</div>
           )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -101,9 +108,12 @@ const SignUp = () => {
 
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700"
+              disabled={isSubmitting}
+              className={`w-full flex justify-center py-2 px-4 border border-transparent 
+                        rounded-md shadow-sm text-sm font-medium text-white 
+                        ${isSubmitting ? 'bg-purple-400' : 'bg-purple-600 hover:bg-purple-700'}`}
             >
-              Sign up
+              {isSubmitting ? 'Signing up...' : 'Sign up'}
             </button>
           </form>
 

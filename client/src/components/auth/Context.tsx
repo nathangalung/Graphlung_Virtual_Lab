@@ -10,8 +10,9 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (formData: any) => Promise<void>;
+  isLoading: boolean;
+  login: (identifier: string, password: string) => Promise<void>;
+  register: (formData: any) => Promise<string>;
   logout: () => void;
 }
 
@@ -20,29 +21,46 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const login = async (email: string, password: string) => {
+  axios.defaults.baseURL = 'http://localhost:3000';
+  axios.defaults.timeout = 5000;
+
+  const login = async (identifier: string, password: string) => {
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
+      setIsLoading(true);
+      const response = await axios.post('/api/auth/login', { identifier, password }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       const { user, token } = response.data;
       setUser(user);
       setIsAuthenticated(true);
       localStorage.setItem('token', token);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login failed:', error);
-      throw new Error('Login failed');
+      throw new Error(error.response?.data?.error || 'Login failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const register = async (formData: any) => {
     try {
-      const response = await axios.post('https://graphlung-virtual-lab-rust.vercel.app/api/auth/register', formData);
+      setIsLoading(true);
+      const response = await axios.post('/api/auth/register', formData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       const { message } = response.data;
-      console.log(message);
       return message;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration failed:', error);
-      throw new Error('Registration failed');
+      throw new Error(error.response?.data?.error || 'Registration failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,7 +71,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      isAuthenticated, 
+      isLoading, 
+      login, 
+      register, 
+      logout 
+    }}>
       {children}
     </AuthContext.Provider>
   );

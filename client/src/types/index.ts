@@ -1,4 +1,3 @@
-// src/types/index.ts
 export enum GraphType {
   CUBIC = 'cubic',
   SINUS = 'sinus',

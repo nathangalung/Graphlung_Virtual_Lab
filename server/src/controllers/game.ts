@@ -1,4 +1,5 @@
 import { Context } from 'hono';
+import prisma from './prisma';
 import { PrismaClient } from '@prisma/client';
 import { GameRecordSchema } from '../types';
 

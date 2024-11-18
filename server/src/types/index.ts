@@ -7,7 +7,7 @@ export const UserSchema = z.object({
 });
 
 export const LoginSchema = z.object({
-  email: z.string().email(),
+  identifier: z.string().min(3), // Accepts either email or username
   password: z.string().min(6),
 });
 

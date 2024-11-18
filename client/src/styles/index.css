@@ -8,6 +8,7 @@
     scroll-behavior: smooth;
   }
   body {
+    padding-top: 70px;
     font-family: 'Black Ops One', system-ui;
     background-color: #f5f5f5;
   }
