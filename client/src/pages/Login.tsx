@@ -21,7 +21,7 @@ const Login = () => {
               }
             }}
             className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md 
-                     shadow-sm text-lg font-medium text-white bg-purple-600 hover:bg-purple-700"
+                     shadow-sm text-lg font-medium text-white bg-purple-600 hover:bg-purple-800"
           >
             Sign In
           </button>
@@ -34,7 +34,7 @@ const Login = () => {
               }
             }}
             className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md 
-                     shadow-sm text-lg font-medium text-white bg-purple-800 hover:bg-purple-900"
+                     shadow-sm text-lg font-medium text-white bg-purple-600 hover:bg-purple-800"
           >
             Sign Up
           </button>
