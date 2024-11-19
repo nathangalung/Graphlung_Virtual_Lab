@@ -1,4 +1,6 @@
-export interface GridProps {
+import { GraphType } from '../types';
+
+interface GridProps {
   width: number;
   height: number;
   unitSize?: number;

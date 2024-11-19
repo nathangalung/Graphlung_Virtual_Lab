@@ -7,14 +7,6 @@ const prisma = new PrismaClient({
       url: process.env.DATABASE_URL,
     },
   },
-  
-  connectionLimit: 10, 
-  pool: {
-    min: 2, 
-    max: 10, 
-    idle: 10000, 
-    acquire: 30000, 
-  }
 });
 
 prisma.$on('error', (e) => {

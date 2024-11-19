@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import Simulation from './pages/Simulation';
-import Game from './pages/Game'; // Ensure this import is correct
+import Game from './pages/Game';
 import Login from './pages/Login';
 import GameMenu from './components/gameplay/GameMenu';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -30,7 +31,7 @@ const AppContent = () => {
   const startGame = (level: 'easy' | 'medium' | 'hard') => {
     setIsInGame(true);
   };
-
+  
   const exitGame = () => {
     setIsInGame(false);
   };

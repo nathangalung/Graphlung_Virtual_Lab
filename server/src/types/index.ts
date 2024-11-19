@@ -2,13 +2,14 @@ import { z } from 'zod';
 
 export const UserSchema = z.object({
   email: z.string().email(),
-  username: z.string().min(3),
-  password: z.string().min(6),
+  username: z.string().min(3, 'Username must be at least 3 characters'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 export const LoginSchema = z.object({
-  identifier: z.string().min(3), // Accepts either email or username
-  password: z.string().min(6),
+  identifierType: z.enum(['email', 'username']),
+  identifier: z.string().min(3, 'Identifier must be at least 3 characters'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 export const GameRecordSchema = z.object({

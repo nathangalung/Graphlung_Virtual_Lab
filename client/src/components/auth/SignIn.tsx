@@ -6,6 +6,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
+    identifierType: 'email',
     identifier: '',
     password: '',
   });
@@ -14,10 +15,11 @@ const SignIn = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(formData.identifier, formData.password);
+      await login(formData.identifierType, formData.identifier, formData.password);
       navigate('/');
-    } catch (err) {
-      setError('Invalid credentials');
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error || 'Invalid credentials';
+      setError(errorMessage);
     }
   };
 
@@ -38,14 +40,28 @@ const SignIn = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Email/Username
+                Sign in with
+              </label>
+              <select
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                value={formData.identifierType}
+                onChange={(e) => setFormData({ ...formData, identifierType: e.target.value })}
+              >
+                <option value="email">Email</option>
+                <option value="username">Username</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                {formData.identifierType === 'email' ? 'Email' : 'Username'}
               </label>
               <input
                 type="text"
                 required
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 value={formData.identifier}
-                onChange={(e) => setFormData({...formData, identifier: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
               />
             </div>
 
@@ -58,7 +74,7 @@ const SignIn = () => {
                 required
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
             </div>
 

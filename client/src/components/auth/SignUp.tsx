@@ -23,16 +23,24 @@ const SignUp = () => {
       return;
     }
 
+    if (formData.username.includes('@')) {
+      setError('Username cannot contain @');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
+      console.log('Submitting form:', formData); // Debugging log
       const message = await register(formData);
-      // Show success message and redirect
-      setTimeout(() => {
-        navigate('/signin');
-      }, 1500);
+      console.log('Registration successful:', message); // Debugging log
+      setError('');
+      setTimeout(() => navigate('/signin'), 1500);
     } catch (err: any) {
-      // Ensure the error message is a string
-      const errorMessage = err.response?.data?.error || err.message || 'Registration failed';
+      console.error('Registration failed error:', err.response || err); // Debugging log
+      const errorMessage =
+        typeof err.response?.data?.error === 'string'
+          ? err.response.data.error
+          : 'Registration failed';
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -50,7 +58,9 @@ const SignUp = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {error && (
-            <div className="mb-4 text-red-600 text-center">{error}</div>
+            <div className="mb-4 text-red-600 text-center">
+              {typeof error === 'string' ? error : 'An unexpected error occurred'}
+            </div>
           )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -63,7 +73,9 @@ const SignUp = () => {
                 required
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
             </div>
 
@@ -76,7 +88,9 @@ const SignUp = () => {
                 required
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 value={formData.username}
-                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
               />
             </div>
 
@@ -89,7 +103,9 @@ const SignUp = () => {
                 required
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
               />
             </div>
 
@@ -102,7 +118,12 @@ const SignUp = () => {
                 required
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    confirmPassword: e.target.value,
+                  })
+                }
               />
             </div>
 

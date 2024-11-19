@@ -11,8 +11,8 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (identifier: string, password: string) => Promise<void>;
-  register: (formData: any) => Promise<string>;
+  login: (identifierType: 'email' | 'username', identifier: string, password: string) => Promise<void>;
+  register: (formData: { email: string; username: string; password: string; confirmPassword: string }) => Promise<string>;
   logout: () => void;
 }
 
@@ -26,10 +26,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   axios.defaults.baseURL = 'http://localhost:3000';
   axios.defaults.timeout = 5000;
 
-  const login = async (identifier: string, password: string) => {
+  const login = async (identifierType: 'email' | 'username', identifier: string, password: string) => {
     try {
       setIsLoading(true);
-      const response = await axios.post('/api/auth/login', { identifier, password }, {
+      const response = await axios.post('/api/auth/login', { identifierType, identifier, password }, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (formData: any) => {
+  const register = async (formData: { email: string; username: string; password: string; confirmPassword: string }) => {
     try {
       setIsLoading(true);
       const response = await axios.post('/api/auth/register', formData, {
