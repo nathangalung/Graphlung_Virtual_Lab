@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  axios.defaults.baseURL = 'http://localhost:3000';
+  axios.defaults.baseURL = 'https://graphlung-virtual-lab';
   axios.defaults.timeout = 5000;
 
   const login = async (identifierType: 'email' | 'username', identifier: string, password: string) => {
